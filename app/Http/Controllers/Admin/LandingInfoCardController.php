@@ -24,7 +24,7 @@ class LandingInfoCardController extends Controller
     {
         $rules = [
             'title' => ['required', 'string', 'max:120'],
-            'icon' => ['required', 'string', 'max:100', 'regex:/^bx[srl]? bx-[a-z0-9-]+$/'],
+            'icon' => ['required', 'string', 'max:100'],
             'color' => ['required', 'in:warning,success,info,danger,primary,dark,secondary'],
             'sort_order' => ['required', 'integer', 'min:0', 'max:999'],
             'is_active' => ['nullable', 'boolean'],
@@ -37,13 +37,19 @@ class LandingInfoCardController extends Controller
         }
 
         $validated = $request->validate($rules, [
-            'icon.regex' => 'Ikon harus berupa class Boxicons, contoh: bx bx-calendar.',
             'items_text.required' => 'Daftar poin tidak boleh kosong.',
         ]);
 
+        $normalizedIcon = LandingInfoCard::normalizeIcon($validated['icon']);
+        if ($normalizedIcon === 'bx bx-image-alt' && trim(strtolower($validated['icon'])) !== 'bx bx-image-alt') {
+            return redirect()->route('admin.landing-info-cards.index')
+                ->withErrors(['icon' => 'Format ikon tidak dikenali. Gunakan contoh: bx bxs-school atau bxs-school.'])
+                ->withInput();
+        }
+
         $data = [
             'title' => $validated['title'],
-            'icon' => $validated['icon'],
+            'icon' => $normalizedIcon,
             'color' => $validated['color'],
             'sort_order' => $validated['sort_order'],
             'is_active' => $request->boolean('is_active'),

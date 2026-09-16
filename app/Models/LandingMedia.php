@@ -18,8 +18,55 @@ class LandingMedia extends Model
 
     public function getUrlAttribute(): string
     {
-        return str_starts_with($this->path, 'landing-media/')
-            ? Storage::disk('public')->url($this->path)
+        $url = str_starts_with($this->path, 'landing-media/')
+            ? asset('storage/' . ltrim($this->path, '/'))
             : asset($this->path);
+
+        return $url . '?v=' . ($this->updated_at?->timestamp ?? 1);
+    }
+
+    public function getFileNameAttribute(): string
+    {
+        return basename($this->path);
+    }
+
+    public function getFileSizeLabelAttribute(): string
+    {
+        $file = $this->absolutePath();
+
+        if (!$file || !is_file($file)) {
+            return 'File tidak ditemukan';
+        }
+
+        $bytes = filesize($file);
+
+        return $bytes >= 1048576
+            ? number_format($bytes / 1048576, 2, ',', '.') . ' MB'
+            : number_format($bytes / 1024, 2, ',', '.') . ' KB';
+    }
+
+    public function getDimensionsAttribute(): string
+    {
+        $file = $this->absolutePath();
+        $size = $file && is_file($file) ? @getimagesize($file) : false;
+
+        return $size ? $size[0] . ' × ' . $size[1] . ' px' : '-';
+    }
+
+    public function getFileFormatAttribute(): string
+    {
+        return strtoupper(pathinfo($this->path, PATHINFO_EXTENSION) ?: '-');
+    }
+
+    public function getIsCustomAttribute(): bool
+    {
+        return str_starts_with($this->path, 'landing-media/');
+    }
+
+    private function absolutePath(): ?string
+    {
+        return $this->is_custom
+            ? Storage::disk('public')->path($this->path)
+            : public_path($this->path);
     }
 }

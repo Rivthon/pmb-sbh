@@ -25,7 +25,23 @@
                     </div>
                     <div class="card-body">
                         <div class="rounded border bg-light overflow-hidden mb-3" style="height:280px">
-                            <img id="preview-{{ $item->id }}" src="{{ $item->url }}" alt="{{ $item->label }}" class="w-100 h-100" style="object-fit:cover">
+                            <img id="preview-{{ $item->id }}" src="{{ $item->url }}" alt="{{ $item->label }}" class="w-100 h-100" style="object-fit:cover" onerror="this.classList.add('d-none'); document.getElementById('preview-error-{{ $item->id }}').classList.remove('d-none')">
+                            <div id="preview-error-{{ $item->id }}" class="d-none d-flex h-100 align-items-center justify-content-center text-center text-muted p-4">
+                                <div><i class="bx bx-image-alt fs-1 d-block mb-2"></i>Gambar tidak dapat ditampilkan.</div>
+                            </div>
+                        </div>
+                        <div class="border rounded p-3 mb-4 bg-light">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="fw-semibold"><i class="bx bx-file me-1"></i>File Saat Ini</span>
+                                <span class="badge {{ $item->is_custom ? 'bg-label-success' : 'bg-label-secondary' }}">{{ $item->is_custom ? 'Upload Admin' : 'Gambar Bawaan' }}</span>
+                            </div>
+                            <div class="row g-2 small">
+                                <div class="col-12"><span class="text-muted">Nama:</span> <span class="text-break">{{ $item->file_name }}</span></div>
+                                <div class="col-6"><span class="text-muted">Format:</span> {{ $item->file_format }}</div>
+                                <div class="col-6"><span class="text-muted">Ukuran:</span> {{ $item->file_size_label }}</div>
+                                <div class="col-6"><span class="text-muted">Dimensi:</span> {{ $item->dimensions }}</div>
+                                <div class="col-6"><span class="text-muted">Diperbarui:</span> {{ $item->updated_at?->format('d/m/Y H:i') ?? '-' }}</div>
+                            </div>
                         </div>
                         <form method="POST" action="{{ route('admin.landing-media.update', $item) }}" enctype="multipart/form-data">
                             @csrf @method('PUT')
@@ -47,7 +63,12 @@
 document.querySelectorAll('.media-image-input').forEach(function (input) {
     input.addEventListener('change', function () {
         const file = this.files && this.files[0];
-        if (file) document.getElementById(this.dataset.preview).src = URL.createObjectURL(file);
+        if (file) {
+            const preview = document.getElementById(this.dataset.preview);
+            preview.src = URL.createObjectURL(file);
+            preview.classList.remove('d-none');
+            document.getElementById('preview-error-' + this.dataset.preview.replace('preview-', '')).classList.add('d-none');
+        }
     });
 });
 </script>

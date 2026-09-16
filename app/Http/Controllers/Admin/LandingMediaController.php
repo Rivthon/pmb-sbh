@@ -7,7 +7,10 @@ use App\Models\LandingMedia;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Throwable;
 
 class LandingMediaController extends Controller
 {
@@ -27,13 +30,40 @@ class LandingMediaController extends Controller
             'image.max' => 'Ukuran gambar maksimal 5 MB.',
         ]);
 
-        $newPath = $request->file('image')->store('landing-media', 'public');
+        $disk = Storage::disk('public');
         $oldPath = $landingMedium->path;
+        $extension = strtolower($request->file('image')->getClientOriginalExtension());
+        $filename = $landingMedium->key . '-' . now()->format('YmdHis') . '-' . Str::random(8) . '.' . $extension;
 
-        $landingMedium->update(['path' => $newPath]);
+        try {
+            if (!$disk->exists('landing-media') && !$disk->makeDirectory('landing-media')) {
+                throw new \RuntimeException('Folder landing-media tidak dapat dibuat.');
+            }
 
-        if (str_starts_with($oldPath, 'landing-media/')) {
-            Storage::disk('public')->delete($oldPath);
+            $newPath = $disk->putFileAs('landing-media', $request->file('image'), $filename);
+
+            if (!$newPath || !$disk->exists($newPath)) {
+                throw new \RuntimeException('File gagal ditulis ke penyimpanan publik.');
+            }
+
+            $landingMedium->update(['path' => $newPath]);
+
+            if (str_starts_with($oldPath, 'landing-media/') && $oldPath !== $newPath) {
+                $disk->delete($oldPath);
+            }
+        } catch (Throwable $exception) {
+            if (isset($newPath) && $newPath && $disk->exists($newPath)) {
+                $disk->delete($newPath);
+            }
+
+            Log::error('Gagal mengunggah gambar landing page.', [
+                'landing_media_id' => $landingMedium->id,
+                'disk_root' => config('filesystems.disks.public.root'),
+                'error' => $exception->getMessage(),
+            ]);
+
+            return redirect()->route('admin.landing-media.index')
+                ->withErrors(['image' => 'Gambar gagal disimpan. Pastikan folder public/storage dapat ditulis, lalu coba kembali.']);
         }
 
         return redirect()->route('admin.landing-media.index')

@@ -1072,7 +1072,7 @@
                         <div class="col-lg-4 col-md-6">
                             <div class="card h-100 border-0 shadow-sm feature-card p-4 text-center">
                                 <div class="feature-icon-box mb-4 mx-auto bg-{{ $card->color }} bg-opacity-10 text-{{ $card->color }}">
-                                    <i class="{{ $card->icon }}"></i>
+                                    <i class="{{ $card->icon_class }}"></i>
                                 </div>
                                 <h5 class="fw-bold text-dark mb-3">{{ $card->title }}</h5>
                                 <p class="text-secondary mb-0">{{ $card->description }}</p>
@@ -1177,7 +1177,7 @@
                     @foreach ($landingInfoCards->get('cost_info', collect()) as $card)
                         <div class="col-md-4">
                             <div class="biaya-info-card info-card-{{ $card->variant }}">
-                                <div class="info-card-icon icon-{{ $card->variant }}"><i class='{{ $card->icon }}'></i></div>
+                                <div class="info-card-icon icon-{{ $card->variant }}"><i class='{{ $card->icon_class }}'></i></div>
                                 <h6>{{ $card->title }}</h6>
                                 <div style="font-size: 13px; color: #475569; line-height: 1.8;">
                                     @foreach ($card->items ?? [] as $item)
