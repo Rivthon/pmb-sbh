@@ -1068,78 +1068,17 @@
                 </div>
 
                 <div class="row g-4">
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card h-100 border-0 shadow-sm feature-card p-4 text-center">
-                            <div class="feature-icon-box mb-4 mx-auto bg-warning bg-opacity-10 text-warning">
-                                <i class="bx bxs-network-chart"></i>
+                    @foreach ($landingInfoCards->get('advantages', collect()) as $card)
+                        <div class="col-lg-4 col-md-6">
+                            <div class="card h-100 border-0 shadow-sm feature-card p-4 text-center">
+                                <div class="feature-icon-box mb-4 mx-auto bg-{{ $card->color }} bg-opacity-10 text-{{ $card->color }}">
+                                    <i class="{{ $card->icon }}"></i>
+                                </div>
+                                <h5 class="fw-bold text-dark mb-3">{{ $card->title }}</h5>
+                                <p class="text-secondary mb-0">{{ $card->description }}</p>
                             </div>
-                            <h5 class="fw-bold text-dark mb-3">Jaringan Karier Luas</h5>
-                            <p class="text-secondary mb-0">
-                                Akses prioritas karier melalui kerja sama eksklusif dengan <strong>RS Azra</strong> dan
-                                jaringan industri kesehatan terkemuka.
-                            </p>
                         </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card h-100 border-0 shadow-sm feature-card p-4 text-center">
-                            <div class="feature-icon-box mb-4 mx-auto bg-success bg-opacity-10 text-success">
-                                <i class="bx bxs-badge-check"></i>
-                            </div>
-                            <h5 class="fw-bold text-dark mb-3">Terakreditasi Resmi</h5>
-                            <p class="text-secondary mb-0">
-                                Mutu pendidikan terjamin. Program studi D3 Kebidanan, S1 Farmasi, dan S1 Gizi telah
-                                terakreditasi oleh <strong>LAM-PTKes</strong>.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card h-100 border-0 shadow-sm feature-card p-4 text-center">
-                            <div class="feature-icon-box mb-4 mx-auto bg-warning bg-opacity-10 text-primary">
-                                <i class="bx bxs-school"></i>
-                            </div>
-                            <h5 class="fw-bold text-dark mb-3">Fasilitas Modern</h5>
-                            <p class="text-secondary mb-0">
-                                Pembelajaran didukung laboratorium lengkap dan fasilitas praktik langsung berstandar
-                                klinis di lingkungan RS Azra.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card h-100 border-0 shadow-sm feature-card p-4 text-center">
-                            <div class="feature-icon-box mb-4 mx-auto bg-info bg-opacity-10 text-info">
-                                <i class="bx bxs-user-detail"></i>
-                            </div>
-                            <h5 class="fw-bold text-dark mb-3">Dosen Praktisi</h5>
-                            <p class="text-secondary mb-0">
-                                Dibimbing langsung oleh para dokter, praktisi medis, dan akademisi berpengalaman di
-                                bidangnya.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card h-100 border-0 shadow-sm feature-card p-4 text-center">
-                            <div class="feature-icon-box mb-4 mx-auto bg-danger bg-opacity-10 text-danger">
-                                <i class="bx bxs-briefcase"></i>
-                            </div>
-                            <h5 class="fw-bold text-dark mb-3">Peluang Magang</h5>
-                            <p class="text-secondary mb-0">
-                                Pengalaman kerja nyata melalui program magang terstruktur di Rumah Sakit dan instansi
-                                kesehatan mitra.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card h-100 border-0 shadow-sm feature-card p-4 text-center">
-                            <div class="feature-icon-box mb-4 mx-auto bg-dark bg-opacity-10 text-dark">
-                                <i class="bx bxs-book-content"></i>
-                            </div>
-                            <h5 class="fw-bold text-dark mb-3">Kurikulum Adaptif</h5>
-                            <p class="text-secondary mb-0">
-                                Materi pembelajaran yang terus diperbarui mengikuti perkembangan teknologi medis
-                                terkini.
-                            </p>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </section>
@@ -1235,49 +1174,19 @@
 
                 <!-- Info Tambahan -->
                 <div class="row mt-5 g-4">
-                    <div class="col-md-4">
-                        <div class="biaya-info-card info-card-periode">
-                            <div class="info-card-icon icon-periode"><i class='bx bx-calendar'></i></div>
-                            <h6>Periode Pendaftaran</h6>
-                            <div class="periode-item"><span class="periode-dot"></span> Gel I: Oktober - Januari 2026
-                            </div>
-                            <div class="periode-item"><span class="periode-dot"></span> Gel II: Februari - Mei 2026
-                            </div>
-                            <div class="periode-item"><span class="periode-dot"></span> Gel III: Juni - Agustus 2026
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="biaya-info-card info-card-termasuk">
-                            <div class="info-card-icon icon-termasuk"><i class='bx bx-check-shield'></i></div>
-                            <h6>Biaya Sudah Termasuk</h6>
-                            <div style="font-size: 13px; color: #475569; line-height: 1.8;">
-                                <div class="periode-item"><span class="periode-dot" style="background: #10b981;"></span>
-                                    Biaya operasional pendidikan (SKS, Lab, UTS/UAS)</div>
-                                <div class="periode-item"><span class="periode-dot" style="background: #10b981;"></span>
-                                    SPP, Uang Pendaftaran, dan Jas Almamater</div>
-                                <div class="periode-item"><span class="periode-dot" style="background: #10b981;"></span>
-                                    Khusus D3 Kebidanan: 3 stel seragam</div>
-                                <div class="periode-item"><span class="periode-dot" style="background: #10b981;"></span>
-                                    Jas Lab untuk Prodi Farmasi &amp; Gizi</div>
-                                <div class="periode-item"><span class="periode-dot" style="background: #10b981;"></span>
-                                    <strong>Laptop Gratis</strong> untuk Mahasiswa Baru
+                    @foreach ($landingInfoCards->get('cost_info', collect()) as $card)
+                        <div class="col-md-4">
+                            <div class="biaya-info-card info-card-{{ $card->variant }}">
+                                <div class="info-card-icon icon-{{ $card->variant }}"><i class='{{ $card->icon }}'></i></div>
+                                <h6>{{ $card->title }}</h6>
+                                <div style="font-size: 13px; color: #475569; line-height: 1.8;">
+                                    @foreach ($card->items ?? [] as $item)
+                                        <div class="periode-item"><span class="periode-dot bg-{{ $card->color }}"></span>{{ $item }}</div>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="biaya-info-card info-card-belum">
-                            <div class="info-card-icon icon-belum"><i class='bx bx-info-circle'></i></div>
-                            <h6>Biaya Belum Termasuk</h6>
-                            <div style="font-size: 13px; color: #475569; line-height: 1.8;">
-                                <div class="periode-item"><span class="periode-dot" style="background: #ef4444;"></span>
-                                    Biaya Wisuda dan Ujian Praktek Klinis/Lapangan</div>
-                                <div class="periode-item"><span class="periode-dot" style="background: #ef4444;"></span>
-                                    Khusus D3 Kebidanan: belum termasuk Ujian Kompetensi, UAP, dan kegiatan PKMD</div>
-                            </div>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </section>

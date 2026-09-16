@@ -55,7 +55,7 @@
                     style="width: 400px; height: 400px; filter: blur(60px); z-index: -1;"></div>
 
                 <div class="position-relative d-inline-block animate-float">
-                    <img src="{{ asset('dashboard_assets/assets/img/front-pages/backgrounds/foto_utama.png') }}"
+                    <img src="{{ $landingMedia->get('hero_image')?->url ?? asset('dashboard_assets/assets/img/front-pages/backgrounds/foto_utama.png') }}"
                         alt="Mahasiswa STIKes Bogor Husada"
                         class="img-fluid rounded-4 shadow-lg position-relative z-1 hero-img-main mt-3 mt-lg-0">
 

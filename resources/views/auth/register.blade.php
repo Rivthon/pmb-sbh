@@ -55,7 +55,7 @@
         .auth-cover-bg {
             flex: 1;
             /* Pastikan path gambar benar */
-            background-image: url("{{ asset('dashboard_assets/assets/img/front-pages/backgrounds/foto_utama.png') }}");
+            background-image: url("{{ \App\Models\LandingMedia::where('key', 'auth_image')->first()?->url ?? asset('dashboard_assets/assets/img/front-pages/backgrounds/foto_utama.png') }}");
             background-size: cover;
             background-position: center;
             position: relative;

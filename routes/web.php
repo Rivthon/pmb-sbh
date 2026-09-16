@@ -41,6 +41,8 @@ use App\Http\Controllers\Dashboard\MasterData\Item\ItemCategoryController;
 use App\Http\Controllers\Admin\BiayaKuliahController;
 use App\Http\Controllers\Admin\LandingVideoController;
 use App\Http\Controllers\Admin\HeroFeatureController;
+use App\Http\Controllers\Admin\LandingInfoCardController;
+use App\Http\Controllers\Admin\LandingMediaController;
 use App\Http\Controllers\Admin\PmbOfflineQueueController;
 use App\Support\AdminPermissions;
 
@@ -330,6 +332,16 @@ Route::prefix('admin')
         Route::middleware(['permission:' . AdminPermissions::LANDING_PAGE_MANAGE])->prefix('hero-features')->name('hero-features.')->group(function () {
             Route::get('/', [HeroFeatureController::class, 'index'])->name('index');
             Route::put('/{heroFeature}', [HeroFeatureController::class, 'update'])->name('update');
+        });
+
+        Route::middleware(['permission:' . AdminPermissions::LANDING_PAGE_MANAGE])->prefix('landing-info-cards')->name('landing-info-cards.')->group(function () {
+            Route::get('/', [LandingInfoCardController::class, 'index'])->name('index');
+            Route::put('/{landingInfoCard}', [LandingInfoCardController::class, 'update'])->name('update');
+        });
+
+        Route::middleware(['permission:' . AdminPermissions::LANDING_PAGE_MANAGE])->prefix('landing-media')->name('landing-media.')->group(function () {
+            Route::get('/', [LandingMediaController::class, 'index'])->name('index');
+            Route::put('/{landingMedium}', [LandingMediaController::class, 'update'])->name('update');
         });
 
         /** ------------------------------

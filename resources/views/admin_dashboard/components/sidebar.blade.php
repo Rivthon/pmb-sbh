@@ -32,7 +32,7 @@
     $seleksiRoutes = ['admin.tes-tulis.*', 'admin.soal.*', 'admin.hasil-tes.*', 'admin.wawancara.*', 'admin.tes-kesehatan.*'];
     $konfigurasiRoutes = ['admin.periode.*', 'admin.gelombang.*', 'admin.jurusan.*', 'admin.kuesioner.*'];
     $referensiRoutes = ['admin.agama.*', 'admin.pekerjaan-ayah.*', 'admin.pekerjaan-ibu.*', 'admin.penghasilan-orang-tua.*'];
-    $kontenRoutes = ['admin.biaya-kuliah.*', 'admin.landing-videos.*', 'admin.hero-features.*'];
+    $kontenRoutes = ['admin.biaya-kuliah.*', 'admin.landing-videos.*', 'admin.hero-features.*', 'admin.landing-info-cards.*', 'admin.landing-media.*'];
     $sistemRoutes = ['admin.users.*', 'admin.roles.*', 'admin.permissions.*'];
     $admin = auth('admin')->user();
     $healthOnlyOfficer = $admin
@@ -392,6 +392,18 @@
                     <a href="{{ route('admin.hero-features.index') }}" class="menu-link">
                         <i class="bx bx-grid-alt me-2"></i>
                         <div>Keunggulan Hero</div>
+                    </a>
+                </li>
+                <li class="menu-item{{ $itemClass(['admin.landing-info-cards.*']) }}">
+                    <a href="{{ route('admin.landing-info-cards.index') }}" class="menu-link">
+                        <i class="bx bx-detail me-2"></i>
+                        <div>Konten Informasi</div>
+                    </a>
+                </li>
+                <li class="menu-item{{ $itemClass(['admin.landing-media.*']) }}">
+                    <a href="{{ route('admin.landing-media.index') }}" class="menu-link">
+                        <i class="bx bx-image me-2"></i>
+                        <div>Gambar Utama</div>
                     </a>
                 </li>
                 <li class="menu-item{{ $itemClass(['admin.biaya-kuliah.*']) }}">
