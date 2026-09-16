@@ -41,9 +41,9 @@ class LandingInfoCardController extends Controller
         ]);
 
         $normalizedIcon = LandingInfoCard::normalizeIcon($validated['icon']);
-        if ($normalizedIcon === 'bx bx-image-alt' && trim(strtolower($validated['icon'])) !== 'bx bx-image-alt') {
+        if (!array_key_exists($normalizedIcon, LandingInfoCard::availableIcons())) {
             return redirect()->route('admin.landing-info-cards.index')
-                ->withErrors(['icon' => 'Format ikon tidak dikenali. Gunakan contoh: bx bxs-school atau bxs-school.'])
+                ->withErrors(['icon' => 'Ikon yang dipilih tidak tersedia. Silakan pilih ikon dari daftar.'])
                 ->withInput();
         }
 

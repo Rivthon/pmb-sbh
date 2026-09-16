@@ -24,13 +24,24 @@
                         <form method="POST" action="{{ route('admin.landing-info-cards.update', $card) }}">
                             @csrf @method('PUT')
                             <div class="card-header border-bottom d-flex align-items-center gap-3">
-                                <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-{{ $card->color }} bg-opacity-10 text-{{ $card->color }}" style="width:48px;height:48px"><i class="{{ $card->icon_class }} fs-4"></i></span>
+                                <span class="d-inline-flex align-items-center justify-content-center rounded-circle" style="width:48px;height:48px;background-color:{{ $card->soft_color }} !important;color:{{ $card->color_hex }} !important"><i class="{{ $card->icon_class }} fs-4"></i></span>
                                 <div><strong>{{ $card->title }}</strong><div class="small text-muted">Urutan {{ $card->sort_order }}</div></div>
                             </div>
                             <div class="card-body">
                                 <div class="row g-3">
                                     <div class="col-md-7"><label class="form-label">Judul</label><input class="form-control" name="title" value="{{ old('title', $card->title) }}" maxlength="120" required></div>
-                                    <div class="col-md-5"><label class="form-label">Ikon Boxicons</label><input class="form-control icon-class-input" name="icon" value="{{ old('icon', $card->icon_class) }}" placeholder="bx bxs-school" required><div class="form-text">Gunakan format <code>bx bxs-school</code> atau cukup <code>bxs-school</code>.</div></div>
+                                    <div class="col-md-5">
+                                        <label class="form-label">Ikon</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text" style="min-width:44px"><i class="{{ $card->icon_class }} fs-5 card-icon-preview"></i></span>
+                                            <select class="form-select card-icon-select" name="icon" required>
+                                                @foreach (\App\Models\LandingInfoCard::availableIcons() as $iconClass => $iconLabel)
+                                                    <option value="{{ $iconClass }}" @selected(old('icon', $card->icon_class) === $iconClass)>{{ $iconLabel }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="form-text">Semua ikon dalam daftar telah didukung oleh website.</div>
+                                    </div>
                                     @if ($group['items'])
                                         <div class="col-12"><label class="form-label">Daftar Poin</label><textarea class="form-control" name="items_text" rows="6" required>{{ old('items_text', implode("\n", $card->items ?? [])) }}</textarea><div class="form-text">Tulis satu poin per baris.</div></div>
                                     @else
@@ -50,3 +61,14 @@
     @endforeach
 </div>
 @endsection
+
+@push('script')
+<script>
+document.querySelectorAll('.card-icon-select').forEach(function (select) {
+    select.addEventListener('change', function () {
+        const preview = this.closest('.input-group').querySelector('.card-icon-preview');
+        preview.className = this.value + ' fs-5 card-icon-preview';
+    });
+});
+</script>
+@endpush

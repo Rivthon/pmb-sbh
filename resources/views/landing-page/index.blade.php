@@ -1071,7 +1071,7 @@
                     @foreach ($landingInfoCards->get('advantages', collect()) as $card)
                         <div class="col-lg-4 col-md-6">
                             <div class="card h-100 border-0 shadow-sm feature-card p-4 text-center">
-                                <div class="feature-icon-box mb-4 mx-auto bg-{{ $card->color }} bg-opacity-10 text-{{ $card->color }}">
+                                <div class="feature-icon-box mb-4 mx-auto" style="background-color: {{ $card->soft_color }} !important; color: {{ $card->color_hex }} !important;">
                                     <i class="{{ $card->icon_class }}"></i>
                                 </div>
                                 <h5 class="fw-bold text-dark mb-3">{{ $card->title }}</h5>
