@@ -1,0 +1,40 @@
+includes:
+    - vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+    level: 8
+
+    paths:
+        - app
+
+    excludePaths:
+        - bootstrap/
+        - config/
+        - database/
+        - storage/
+        - resources/
+        - tests/
+        - public/
+
+    tmpDir: storage/app/phpstan
+
+    # ✅ Aktifkan analisis Laravel (Eloquent, Facades, dll)
+    larastan:
+        analyse:
+            - app
+
+    # ✅ Abaikan error yang tidak relevan atau auto-generated
+    ignoreErrors:
+        - '#Relation .+ not found in .+#'
+        - '#Property .+ does not exist on .+#'
+        - '#Call to an undefined method .+#'
+
+    # ✅ Optimasi tambahan
+    inferPrivatePropertyTypeFromConstructor: true
+    checkMissingVarTagTypehint: false
+    treatPhpDocTypesAsCertain: false
+
+    # ✅ Agar helper Laravel dikenali
+    bootstrapFiles:
+        - vendor/laravel/framework/src/Illuminate/Foundation/helpers.php
+        - vendor/laravel/framework/src/Illuminate/Support/helpers.php
