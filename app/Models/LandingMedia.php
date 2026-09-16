@@ -19,7 +19,7 @@ class LandingMedia extends Model
     public function getUrlAttribute(): string
     {
         $url = str_starts_with($this->path, 'landing-media/')
-            ? asset('storage/' . ltrim($this->path, '/'))
+            ? $this->uploadedFileUrl()
             : asset($this->path);
 
         return $url . '?v=' . ($this->updated_at?->timestamp ?? 1);
@@ -65,8 +65,22 @@ class LandingMedia extends Model
 
     private function absolutePath(): ?string
     {
-        return $this->is_custom
-            ? Storage::disk('public')->path($this->path)
-            : public_path($this->path);
+        if (!$this->is_custom) {
+            return public_path($this->path);
+        }
+
+        return Storage::disk('local')->exists($this->path)
+            ? Storage::disk('local')->path($this->path)
+            : Storage::disk('public')->path($this->path);
+    }
+
+    private function uploadedFileUrl(): string
+    {
+        if (Storage::disk('local')->exists($this->path)) {
+            return route('landing-media.file', ['filename' => basename($this->path)], false);
+        }
+
+        // Kompatibilitas untuk gambar yang diunggah sebelum lokasi penyimpanan dipindahkan.
+        return asset('storage/' . ltrim($this->path, '/'));
     }
 }

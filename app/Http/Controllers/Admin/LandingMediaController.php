@@ -30,7 +30,9 @@ class LandingMediaController extends Controller
             'image.max' => 'Ukuran gambar maksimal 5 MB.',
         ]);
 
-        $disk = Storage::disk('public');
+        // Gunakan disk local (storage/app), karena public/storage sering tidak
+        // writable pada shared hosting atau deployment production.
+        $disk = Storage::disk('local');
         $oldPath = $landingMedium->path;
         $extension = strtolower($request->file('image')->getClientOriginalExtension());
         $filename = $landingMedium->key . '-' . now()->format('YmdHis') . '-' . Str::random(8) . '.' . $extension;
@@ -49,7 +51,11 @@ class LandingMediaController extends Controller
             $landingMedium->update(['path' => $newPath]);
 
             if (str_starts_with($oldPath, 'landing-media/') && $oldPath !== $newPath) {
-                $disk->delete($oldPath);
+                if (Storage::disk('local')->exists($oldPath)) {
+                    Storage::disk('local')->delete($oldPath);
+                } elseif (Storage::disk('public')->exists($oldPath)) {
+                    Storage::disk('public')->delete($oldPath);
+                }
             }
         } catch (Throwable $exception) {
             if (isset($newPath) && $newPath && $disk->exists($newPath)) {
@@ -58,12 +64,12 @@ class LandingMediaController extends Controller
 
             Log::error('Gagal mengunggah gambar landing page.', [
                 'landing_media_id' => $landingMedium->id,
-                'disk_root' => config('filesystems.disks.public.root'),
+                'disk_root' => config('filesystems.disks.local.root'),
                 'error' => $exception->getMessage(),
             ]);
 
             return redirect()->route('admin.landing-media.index')
-                ->withErrors(['image' => 'Gambar gagal disimpan. Pastikan folder public/storage dapat ditulis, lalu coba kembali.']);
+                ->withErrors(['image' => 'Gambar gagal disimpan ke penyimpanan aplikasi. Silakan coba kembali atau hubungi administrator server.']);
         }
 
         return redirect()->route('admin.landing-media.index')

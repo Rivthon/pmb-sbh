@@ -57,6 +57,18 @@ Route::get('/storage/{filename}', function ($filename) {
     return Response::file($path);
 })->where('filename', '[A-Za-z0-9._-]+');
 
+Route::get('/landing-media/{filename}', function (string $filename) {
+    $safeFileName = basename($filename);
+    $path = Storage::disk('local')->path('landing-media/' . $safeFileName);
+
+    abort_unless(is_file($path), 404);
+
+    return Response::file($path, [
+        'Cache-Control' => 'public, max-age=31536000, immutable',
+        'X-Content-Type-Options' => 'nosniff',
+    ]);
+})->where('filename', '[A-Za-z0-9._-]+')->name('landing-media.file');
+
 
 Route::get('/', [MainController::class, 'home'])->name('home');
 // Static Pages

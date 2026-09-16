@@ -16,7 +16,7 @@ class LandingMediaUploadTest extends TestCase
 
     public function test_landing_image_can_be_uploaded_and_saved(): void
     {
-        Storage::fake('public');
+        Storage::fake('local');
 
         $media = LandingMedia::query()->create([
             'key' => 'upload-test',
@@ -32,10 +32,11 @@ class LandingMediaUploadTest extends TestCase
         $media->refresh();
 
         $this->assertStringStartsWith('landing-media/upload-test-', $media->path);
-        Storage::disk('public')->assertExists($media->path);
-        $this->assertStringContainsString('/storage/landing-media/', $media->url);
+        Storage::disk('local')->assertExists($media->path);
+        $this->assertStringContainsString('/landing-media/', $media->url);
         $this->assertSame('WEBP', $media->file_format);
         $this->assertSame('1200 × 800 px', $media->dimensions);
         $this->assertNotSame('File tidak ditemukan', $media->file_size_label);
+        $this->get($media->url)->assertOk();
     }
 }
