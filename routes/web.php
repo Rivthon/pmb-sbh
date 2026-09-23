@@ -329,6 +329,7 @@ Route::prefix('admin')
             Route::get('/', [BiayaKuliahController::class, 'index'])->name('index');
             Route::get('/{prodiKey}/edit', [BiayaKuliahController::class, 'edit'])->name('edit');
             Route::put('/{prodiKey}', [BiayaKuliahController::class, 'update'])->name('update');
+            Route::put('/{prodiKey}/visibility', [BiayaKuliahController::class, 'toggleVisibility'])->name('visibility');
         });
 
         Route::middleware(['permission:' . AdminPermissions::LANDING_PAGE_MANAGE])->prefix('landing-videos')->name('landing-videos.')->group(function () {

@@ -47,6 +47,9 @@
                                 <div>
                                     <h6 class="mb-0 fw-bold">{{ $prodi->prodi_nama }}</h6>
                                     <small class="text-muted">{{ $prodi->jumlah_semester }} Semester</small>
+                                    <span class="badge d-block mt-1 {{ $prodi->is_visible ? 'bg-label-success' : 'bg-label-secondary' }}">
+                                        <i class="bx {{ $prodi->is_visible ? 'bx-show' : 'bx-hide' }} me-1"></i>{{ $prodi->is_visible ? 'Tampil' : 'Disembunyikan' }}
+                                    </span>
                                 </div>
                             </div>
 
@@ -69,10 +72,17 @@
                                 </div>
                             </div>
 
-                            <a href="{{ route('admin.biaya-kuliah.edit', $prodi->prodi_key) }}"
-                                class="btn btn-sm btn-primary w-100">
-                                <i class="bx bx-edit me-1"></i> Edit Biaya
-                            </a>
+                            <div class="d-grid gap-2">
+                                <a href="{{ route('admin.biaya-kuliah.edit', $prodi->prodi_key) }}" class="btn btn-sm btn-primary">
+                                    <i class="bx bx-edit me-1"></i> Edit Biaya
+                                </a>
+                                <form action="{{ route('admin.biaya-kuliah.visibility', $prodi->prodi_key) }}" method="POST">
+                                    @csrf @method('PUT')
+                                    <button type="submit" class="btn btn-sm w-100 {{ $prodi->is_visible ? 'btn-outline-danger' : 'btn-outline-success' }}" onclick="return confirm('{{ $prodi->is_visible ? 'Sembunyikan program studi ini dari halaman utama?' : 'Tampilkan program studi ini di halaman utama?' }}')">
+                                        <i class="bx {{ $prodi->is_visible ? 'bx-hide' : 'bx-show' }} me-1"></i>{{ $prodi->is_visible ? 'Sembunyikan' : 'Tampilkan' }}
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>

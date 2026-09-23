@@ -10,7 +10,7 @@
                 <div
                     class="d-inline-flex align-items-center border border-warning bg-warning bg-opacity-10 rounded-pill px-3 py-1 mb-3 mb-lg-4">
                     <span class="badge bg-warning rounded-pill me-2">Baru</span>
-                    <span class="text-dark fw-bold fs-tiny">PMB 2026/2027</span>
+                    <span class="text-dark fw-bold fs-tiny">PMB {{ $activePeriode?->academic_year_label ?? '2026/2027' }}</span>
                 </div>
 
                 <h1 class="display-5 fw-extrabold text-dark mb-3 lh-sm responsive-title">

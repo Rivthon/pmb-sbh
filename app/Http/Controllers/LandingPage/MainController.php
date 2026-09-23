@@ -9,6 +9,7 @@ use App\Models\LandingVideo;
 use App\Models\HeroFeature;
 use App\Models\LandingInfoCard;
 use App\Models\LandingMedia;
+use App\Models\Periode;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LandingPage\SendCustomerMessageRequest;
 
@@ -21,8 +22,12 @@ class MainController extends Controller
         $heroFeatures = HeroFeature::active()->get();
         $landingInfoCards = LandingInfoCard::active()->get()->groupBy('section');
         $landingMedia = LandingMedia::query()->get()->keyBy('key');
+        $activePeriode = Periode::query()
+            ->where('status_periode', 'aktif')
+            ->orderByDesc('tgl_mulai')
+            ->first();
 
-        return view('landing-page.index', compact('biayaData', 'landingVideos', 'heroFeatures', 'landingInfoCards', 'landingMedia'));
+        return view('landing-page.index', compact('biayaData', 'landingVideos', 'heroFeatures', 'landingInfoCards', 'landingMedia', 'activePeriode'));
     }
 
     public function sendCustomerMessage(SendCustomerMessageRequest $request)

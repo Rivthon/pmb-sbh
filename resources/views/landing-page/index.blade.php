@@ -1101,76 +1101,40 @@
                 </div>
 
                 <!-- Tab Prodi -->
+                @php
+                    $biayaProgramMeta = [
+                        'd3' => ['title' => 'D3 Kebidanan', 'years' => '3 Tahun'],
+                        'farmasi' => ['title' => 'S1 Farmasi Reguler', 'years' => '4 Tahun'],
+                        'karyawan' => ['title' => 'S1 Farmasi Karyawan', 'years' => '4 Tahun'],
+                        'gizi' => ['title' => 'S1 Gizi', 'years' => '4 Tahun'],
+                    ];
+                @endphp
                 <div class="biaya-tabs" id="biayaProdiTabs">
-                    <button class="biaya-tab-btn active" data-prodi="d3" data-target="panel-d3">D3 Kebidanan</button>
-                    <button class="biaya-tab-btn" data-prodi="farmasi" data-target="panel-farmasi">S1 Farmasi Reguler</button>
-                    <button class="biaya-tab-btn" data-prodi="karyawan" data-target="panel-karyawan">S1 Farmasi Karyawan</button>
-                    <button class="biaya-tab-btn" data-prodi="gizi" data-target="panel-gizi">S1 Gizi</button>
+                    @foreach ($biayaData as $prodiKey => $prodiData)
+                        <button class="biaya-tab-btn {{ $loop->first ? 'active' : '' }}" data-prodi="{{ $prodiKey }}" data-target="panel-{{ $prodiKey }}">
+                            {{ $biayaProgramMeta[$prodiKey]['title'] ?? $prodiData['nama'] }}
+                        </button>
+                    @endforeach
                 </div>
 
-                <!-- Panel: D3 Kebidanan -->
-                <div class="biaya-panel" id="panel-d3" data-prodi="d3">
-                    <div class="biaya-card" data-prodi="d3">
-                        <div class="biaya-card-header text-center">
-                            <h2 class="biaya-card-title">Program Studi D3 Kebidanan</h2>
-                            <span class="subtitle">Waktu Studi : 6 Semester (3 Tahun)</span>
+                @forelse ($biayaData as $prodiKey => $prodiData)
+                    <div class="biaya-panel" id="panel-{{ $prodiKey }}" data-prodi="{{ $prodiKey }}" style="{{ $loop->first ? '' : 'display: none;' }}">
+                        <div class="biaya-card" data-prodi="{{ $prodiKey }}">
+                            <div class="biaya-card-header text-center">
+                                <h2 class="biaya-card-title">Program Studi {{ $biayaProgramMeta[$prodiKey]['title'] ?? $prodiData['nama'] }}</h2>
+                                <span class="subtitle">Waktu Studi : {{ $prodiData['semesters'] }} Semester ({{ $biayaProgramMeta[$prodiKey]['years'] ?? ceil($prodiData['semesters'] / 2) . ' Tahun' }})</span>
+                            </div>
+                            <div class="gel-tabs" data-card="{{ $prodiKey }}">
+                                @foreach (array_keys($prodiData['gel']) as $gelombang)
+                                    <button class="gel-tab {{ $loop->first ? 'active' : '' }}" data-gel="{{ $gelombang }}">Gelombang {{ ['I', 'II', 'III'][$gelombang - 1] ?? $gelombang }}</button>
+                                @endforeach
+                            </div>
+                            <div class="semester-grid" id="{{ $prodiKey }}-semesters"></div>
                         </div>
-                        <div class="gel-tabs" data-card="d3">
-                            <button class="gel-tab active" data-gel="1">Gelombang I</button>
-                            <button class="gel-tab" data-gel="2">Gelombang II</button>
-                            <button class="gel-tab" data-gel="3">Gelombang III</button>
-                        </div>
-                        <div class="semester-grid" id="d3-semesters"></div>
                     </div>
-                </div>
-
-                <!-- Panel: S1 Farmasi Reguler -->
-                <div class="biaya-panel" id="panel-farmasi" data-prodi="farmasi" style="display: none;">
-                    <div class="biaya-card" data-prodi="farmasi">
-                        <div class="biaya-card-header text-center">
-                            <h2 class="biaya-card-title">Program Studi S1 Farmasi Reguler</h2>
-                            <span class="subtitle">Waktu Studi : 8 Semester (4 Tahun)</span>
-                        </div>
-                        <div class="gel-tabs" data-card="farmasi">
-                            <button class="gel-tab active" data-gel="1">Gelombang I</button>
-                            <button class="gel-tab" data-gel="2">Gelombang II</button>
-                            <button class="gel-tab" data-gel="3">Gelombang III</button>
-                        </div>
-                        <div class="semester-grid" id="farmasi-semesters"></div>
-                    </div>
-                </div>
-
-                <!-- Panel: S1 Farmasi Karyawan -->
-                <div class="biaya-panel" id="panel-karyawan" data-prodi="karyawan" style="display: none;">
-                    <div class="biaya-card" data-prodi="karyawan">
-                        <div class="biaya-card-header text-center">
-                            <h2 class="biaya-card-title">Program Studi S1 Farmasi Karyawan</h2>
-                            <span class="subtitle">Waktu Studi : 8 Semester (4 Tahun)</span>
-                        </div>
-                        <div class="gel-tabs" data-card="karyawan">
-                            <button class="gel-tab active" data-gel="1">Gelombang I</button>
-                            <button class="gel-tab" data-gel="2">Gelombang II</button>
-                            <button class="gel-tab" data-gel="3">Gelombang III</button>
-                        </div>
-                        <div class="semester-grid" id="karyawan-semesters"></div>
-                    </div>
-                </div>
-
-                <!-- Panel: S1 Gizi -->
-                <div class="biaya-panel" id="panel-gizi" data-prodi="gizi" style="display: none;">
-                    <div class="biaya-card" data-prodi="gizi">
-                        <div class="biaya-card-header text-center">
-                            <h2 class="biaya-card-title">Program Studi S1 Gizi</h2>
-                            <span class="subtitle">Waktu Studi : 8 Semester (4 Tahun)</span>
-                        </div>
-                        <div class="gel-tabs" data-card="gizi">
-                            <button class="gel-tab active" data-gel="1">Gelombang I</button>
-                            <button class="gel-tab" data-gel="2">Gelombang II</button>
-                            <button class="gel-tab" data-gel="3">Gelombang III</button>
-                        </div>
-                        <div class="semester-grid" id="gizi-semesters"></div>
-                    </div>
-                </div>
+                @empty
+                    <div class="alert alert-info text-center">Informasi biaya kuliah belum ditampilkan.</div>
+                @endforelse
 
                 <!-- Info Tambahan -->
                 <div class="row mt-5 g-4">

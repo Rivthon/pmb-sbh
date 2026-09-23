@@ -13,7 +13,7 @@ class BiayaKuliahController extends Controller
      */
     public function index()
     {
-        $prodis = BiayaKuliah::select('prodi_key', 'prodi_nama', 'jumlah_semester')
+        $prodis = BiayaKuliah::select('prodi_key', 'prodi_nama', 'jumlah_semester', 'is_visible')
             ->distinct()
             ->orderByRaw("FIELD(prodi_key, 'd3', 'farmasi', 'karyawan', 'gizi')")
             ->get();
@@ -76,5 +76,18 @@ class BiayaKuliahController extends Controller
         return redirect()
             ->route('admin.biaya-kuliah.index')
             ->with('success', 'Biaya kuliah berhasil diperbarui.');
+    }
+
+    public function toggleVisibility(string $prodiKey)
+    {
+        $prodi = BiayaKuliah::where('prodi_key', $prodiKey)->firstOrFail();
+        $isVisible = !$prodi->is_visible;
+
+        BiayaKuliah::where('prodi_key', $prodiKey)->update(['is_visible' => $isVisible]);
+
+        return redirect()->route('admin.biaya-kuliah.index')->with(
+            'success',
+            $prodi->prodi_nama . ($isVisible ? ' ditampilkan' : ' disembunyikan') . ' dari halaman utama.'
+        );
     }
 }

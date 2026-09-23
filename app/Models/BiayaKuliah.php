@@ -18,6 +18,7 @@ class BiayaKuliah extends Model
         'gelombang',
         'semester',
         'biaya',
+        'is_visible',
     ];
 
     protected $casts = [
@@ -25,6 +26,7 @@ class BiayaKuliah extends Model
         'semester'        => 'integer',
         'jumlah_semester' => 'integer',
         'biaya'           => 'integer',
+        'is_visible'      => 'boolean',
     ];
 
     /**
@@ -37,7 +39,8 @@ class BiayaKuliah extends Model
      */
     public static function getForLandingPage(): array
     {
-        $all = self::orderBy('prodi_key')
+        $all = self::where('is_visible', true)
+            ->orderBy('prodi_key')
             ->orderBy('gelombang')
             ->orderBy('semester')
             ->get();
