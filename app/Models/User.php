@@ -75,9 +75,10 @@ class User extends Authenticatable
         'img_ijazah',
         'tempat_lahir',
         'tgl_lahir',
-        'password_plaintext',
         'email_verified_at',
         'verification_code',
+        'verification_code_expires_at',
+        'verification_attempts',
         'image',
     ];
 
@@ -86,6 +87,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
         'verification_code',
+        'password_plaintext',
     ];
 
     /** @var array<string, string> */
@@ -93,6 +95,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'verification_code_expires_at' => 'datetime',
     ];
 
     public const ADMIN_ROLE = 'admin';

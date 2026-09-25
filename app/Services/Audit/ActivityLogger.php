@@ -51,7 +51,7 @@ class ActivityLogger
 
     private function redact(array $values): array
     {
-        foreach (['password', 'password_confirmation', 'remember_token', 'verification_code'] as $key) {
+        foreach (['password', 'password_confirmation', 'password_plaintext', 'remember_token', 'verification_code'] as $key) {
             if (array_key_exists($key, $values)) {
                 $values[$key] = '[redacted]';
             }

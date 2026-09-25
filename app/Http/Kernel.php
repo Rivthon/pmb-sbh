@@ -10,8 +10,12 @@ class Kernel extends HttpKernel
      * Global middleware (dijalankan di semua request)
      */
     protected $middleware = [
+        // TrustHosts dinonaktifkan karena deployment dapat berada di balik
+        // reverse proxy dengan host internal yang berbeda dari APP_URL.
+        // Validasi host sebaiknya dilakukan di konfigurasi web server/proxy.
         // \App\Http\Middleware\TrustHosts::class,
         \App\Http\Middleware\TrustProxies::class,
+        \App\Http\Middleware\SecurityHeaders::class,
         \Illuminate\Http\Middleware\HandleCors::class,
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,

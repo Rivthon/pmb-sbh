@@ -10,6 +10,14 @@
     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
         <!-- Search -->
         <h5 class="mb-0">{{ config('app.name') }}</h5>
+        @if(session()->has('impersonator_admin_id'))
+            <form method="POST" action="{{ route('auth.impersonate.stop') }}" class="ms-3">
+                @csrf
+                <button type="submit" class="btn btn-sm btn-warning">
+                    <i class="bx bx-arrow-back me-1"></i> Kembali ke Admin
+                </button>
+            </form>
+        @endif
         <!-- /Search -->
 
         <ul class="navbar-nav flex-row align-items-center ms-auto">
@@ -49,10 +57,13 @@
                     </li>
 
                     <li>
-                        <a class="dropdown-item" href="{{ route('auth.logout') }}">
-                            <i class="bx bx-power-off me-2"></i>
-                            <span class="align-middle">Log Out</span>
-                        </a>
+                        <form method="POST" action="{{ route('auth.logout') }}">
+                            @csrf
+                            <button type="submit" class="dropdown-item">
+                                <i class="bx bx-power-off me-2"></i>
+                                <span class="align-middle">Log Out</span>
+                            </button>
+                        </form>
                     </li>
                 </ul>
             </li>

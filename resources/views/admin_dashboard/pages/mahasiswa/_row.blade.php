@@ -23,11 +23,16 @@
         {{ $mahasiswa->jurusan->nama_jurusan ?? '-' }}
     </td>
     <td>
-        @if ($mahasiswa->password_plaintext)
-            <code class="px-2 py-0.5 rounded bg-label-secondary text-secondary" style="font-family: monospace; font-size: 0.8125rem;">{{ $mahasiswa->password_plaintext }}</code>
+        @can(\App\Support\AdminPermissions::PMB_IMPERSONATE)
+            <form action="{{ route('admin.mahasiswa-baru.impersonate', $mahasiswa->id) }}" method="POST">
+                @csrf
+                <button type="submit" class="btn btn-sm btn-outline-primary" onclick="return confirm('Masuk sebagai {{ addslashes($mahasiswa->name) }}? Aktivitas ini akan dicatat.')">
+                    <i class="bx bx-log-in-circle me-1"></i> Masuk
+                </button>
+            </form>
         @else
-            <span class="text-muted">-</span>
-        @endif
+            <span class="text-muted">Password terenkripsi</span>
+        @endcan
     </td>
     <td class="text-center">
         <div class="dropdown">
@@ -36,6 +41,16 @@
                 <i class="bx bx-dots-vertical-rounded"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="aksiDropdownRow{{ $mahasiswa->id }}">
+                <li>
+                    @can(\App\Support\AdminPermissions::PMB_IMPERSONATE)
+                    <form action="{{ route('admin.mahasiswa-baru.impersonate', $mahasiswa->id) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="dropdown-item text-primary" onclick="return confirm('Masuk sebagai {{ addslashes($mahasiswa->name) }}? Aktivitas ini akan dicatat.')">
+                            <i class="bx bx-log-in-circle text-primary me-2"></i> Masuk sebagai Mahasiswa
+                        </button>
+                    </form>
+                    @endcan
+                </li>
                 <li>
                     <a class="dropdown-item" href="{{ route('admin.mahasiswa-baru.detail', $mahasiswa->id) }}">
                         <i class="bx bx-show text-info me-2"></i> Detail Profil

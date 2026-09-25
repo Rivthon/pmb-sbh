@@ -467,10 +467,13 @@
             <span class="menu-header-text">Akun</span>
         </li>
         <li class="menu-item">
-            <a href="{{ route('admin.logout') }}" class="menu-link">
-                <i class="menu-icon bx bx-power-off text-danger"></i>
-                <div>Logout</div>
-            </a>
+            <form method="POST" action="{{ route('admin.logout') }}">
+                @csrf
+                <button type="submit" class="menu-link border-0 bg-transparent w-100 text-start">
+                    <i class="menu-icon bx bx-power-off text-danger"></i>
+                    <div>Logout</div>
+                </button>
+            </form>
         </li>
     </ul>
 </aside>

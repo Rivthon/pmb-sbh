@@ -102,7 +102,7 @@
             {{-- Desktop Table --}}
             <div class="mahasiswa-table-desktop d-none d-md-block">
                 @component('admin_dashboard.components.admin-table', [
-                    'headers' => ['', 'No', 'Tanggal Daftar', 'Nama / Email', 'Status PMB', 'Berkas', 'Program Studi', 'Plain Password', 'Aksi'],
+                    'headers' => ['', 'No', 'Tanggal Daftar', 'Nama / Email', 'Status PMB', 'Berkas', 'Program Studi', 'Akses Akun', 'Aksi'],
                     'bodyId' => 'mahasiswa-table-body'
                 ])
                     @include('admin_dashboard.pages.mahasiswa._table', ['data' => $data])

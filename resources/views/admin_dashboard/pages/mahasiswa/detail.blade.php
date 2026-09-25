@@ -224,12 +224,16 @@
                                             <span class="text-heading fw-semibold">{{ $mahasiswa->asal_sekolah ?? '-' }}</span>
                                         </div>
                                         <div>
-                                            <small class="text-muted d-block">Plain Password (Kredensial)</small>
-                                            @if ($mahasiswa->password_plaintext)
-                                                <code class="px-2 py-0.5 rounded bg-label-secondary text-secondary" style="font-family: monospace; font-size: 0.875rem;">{{ $mahasiswa->password_plaintext }}</code>
-                                            @else
-                                                <span class="text-muted">-</span>
-                                            @endif
+                                            <small class="text-muted d-block mb-2">Akses Akun Mahasiswa</small>
+                                            <div class="text-muted small mb-2">Password tersimpan terenkripsi dan tidak dapat ditampilkan kembali.</div>
+                                            @can(\App\Support\AdminPermissions::PMB_IMPERSONATE)
+                                                <form action="{{ route('admin.mahasiswa-baru.impersonate', $mahasiswa->id) }}" method="POST" class="mb-2">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-outline-primary" onclick="return confirm('Masuk sebagai {{ addslashes($mahasiswa->name) }}? Aktivitas ini akan dicatat.')">
+                                                        <i class="bx bx-log-in-circle me-1"></i> Masuk sebagai Mahasiswa
+                                                    </button>
+                                                </form>
+                                            @endcan
                                             <form action="{{ route('admin.mahasiswa-baru.generate-password', $mahasiswa->id) }}" method="POST" class="mt-2">
                                                 @csrf
                                                 <button type="submit" class="btn btn-sm btn-outline-warning" onclick="return confirm('Buat password baru untuk mahasiswa ini?')">

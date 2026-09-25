@@ -60,6 +60,8 @@ class MahasiswaExport implements FromQuery, WithHeadings, WithMapping, WithStyle
             'Agama',
             'Alamat Lengkap',
             'Asal Sekolah',
+            'Nama Ayah',
+            'Nama Ibu',
             'Program Studi',
             'Periode Akademik',
             'Gelombang PMB',
@@ -108,6 +110,8 @@ class MahasiswaExport implements FromQuery, WithHeadings, WithMapping, WithStyle
             $mahasiswa->agama->nama_agama ?? '-',
             $fullAddress,
             $mahasiswa->asal_sekolah ?? '-',
+            $mahasiswa->nama_ayah ?? '-',
+            $mahasiswa->nama_ibu ?? '-',
             $mahasiswa->jurusan->nama_jurusan ?? '-',
             $mahasiswa->periode->deskripsi ?? '-',
             $mahasiswa->gelombang->nama_gelombang ?? '-',
@@ -190,9 +194,9 @@ class MahasiswaExport implements FromQuery, WithHeadings, WithMapping, WithStyle
                 $sheet->getStyle("A9:A{$highestRow}")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
                 $sheet->getStyle("D9:F{$highestRow}")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
                 $sheet->getStyle("G9:I{$highestRow}")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-                $sheet->getStyle("N9:O{$highestRow}")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-                $sheet->getStyle("P9:R{$highestRow}")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-                $sheet->getStyle("S9:S{$highestRow}")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle("O9:Q{$highestRow}")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle("R9:T{$highestRow}")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle("U9:U{$highestRow}")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
                 
                 // Total Count Summary at bottom
                 $totalRow = $highestRow + 2;

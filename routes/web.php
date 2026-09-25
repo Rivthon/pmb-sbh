@@ -89,13 +89,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('login', [AdminAuthController::class, 'showLoginForm'])->name('login');
 
     // Proses login admin
-    Route::post('login', [AdminAuthController::class, 'storeLogin'])->name('login.store');
+    Route::post('login', [AdminAuthController::class, 'storeLogin'])->middleware('throttle:5,1')->name('login.store');
 
     // // Dashboard admin dengan middleware auth:admin
     // Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard')->middleware('auth:admin');
 
     // Logout admin
-    Route::get('/logout', [AdminAuthController::class, 'logout'])->name('logout')->middleware('auth:admin');
+    Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout')->middleware('auth:admin');
 
 
     // Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout')->middleware('auth:admin');
@@ -136,6 +136,7 @@ Route::prefix('admin')
         Route::put('mahasiswa-baru/{id}', [MahasiswaBaruController::class, 'update'])->middleware('permission:' . AdminPermissions::PMB_EDIT)->name('mahasiswa-baru.update');
         Route::post('mahasiswa-baru/generate-password-bulk', [MahasiswaBaruController::class, 'generatePasswordsBulk'])->middleware('permission:' . AdminPermissions::PMB_EDIT)->name('mahasiswa-baru.generate-password-bulk');
         Route::post('mahasiswa-baru/{id}/generate-password', [MahasiswaBaruController::class, 'generatePassword'])->middleware('permission:' . AdminPermissions::PMB_EDIT)->name('mahasiswa-baru.generate-password');
+        Route::post('mahasiswa-baru/{id}/impersonate', [MahasiswaBaruController::class, 'impersonate'])->middleware('permission:' . AdminPermissions::PMB_IMPERSONATE)->name('mahasiswa-baru.impersonate');
         Route::delete('mahasiswa-baru/{id}', [MahasiswaBaruController::class, 'destroy'])->middleware('permission:' . AdminPermissions::PMB_DELETE)->name('mahasiswa-baru.destroy');
 
         Route::put('mahasiswa-baru/{id}/update-status', [MahasiswaBaruController::class, 'updateStatus'])->middleware('permission:' . AdminPermissions::PMB_UPDATE_STATUS)->name('mahasiswa-baru.update-status');
@@ -442,7 +443,7 @@ Route::group([
     'as' => 'auth.'
 ], function () {
     Route::get('/login', [AuthController::class, 'viewLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'storeLogin'])->name('store.login');
+    Route::post('/login', [AuthController::class, 'storeLogin'])->middleware('throttle:5,1')->name('store.login');
 
     Route::get('/register', [AuthController::class, 'viewRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'storeRegister'])->name('store.register');
@@ -450,8 +451,8 @@ Route::group([
         ->name('update-phone');
 
     Route::get('/verifikasi-akun/{user}', [AuthController::class, 'viewVerifyAccount'])->name('verify-account');
-    Route::post('/verifikasi-akun/{user}', [AuthController::class, 'storeVerifyAccount'])->name('store.verify-account');
-    Route::get('/verifikasi-akun/kirim-ulang-kode/{user}', [AuthController::class, 'resendVerifyCode'])->name('resend-code');
+    Route::post('/verifikasi-akun/{user}', [AuthController::class, 'storeVerifyAccount'])->middleware('throttle:5,1')->name('store.verify-account');
+    Route::post('/verifikasi-akun/kirim-ulang-kode/{user}', [AuthController::class, 'resendVerifyCode'])->middleware('throttle:2,1')->name('resend-code');
 
     Route::get('/template-email', function () {
         $verifyCode = 123123;
@@ -462,7 +463,8 @@ Route::group([
         return view('templates.mail.verify-code', compact('verifyCode', 'user_name', 'user_id', 'prodi'));
     });
 
-    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
+    Route::post('/impersonasi/selesai', [AuthController::class, 'stopImpersonating'])->middleware('auth')->name('impersonate.stop');
 });
 
 Route::group([

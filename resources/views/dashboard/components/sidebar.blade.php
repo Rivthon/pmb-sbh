@@ -163,10 +163,13 @@
         </li>
 
         <li class="menu-item">
-            <a href="{{ route('auth.logout') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-log-out-circle"></i>
-                <div>Log Out</div>
-            </a>
+            <form method="POST" action="{{ route('auth.logout') }}">
+                @csrf
+                <button type="submit" class="menu-link border-0 bg-transparent w-100 text-start">
+                    <i class="menu-icon tf-icons bx bx-log-out-circle"></i>
+                    <div>Log Out</div>
+                </button>
+            </form>
         </li>
 
     </ul>

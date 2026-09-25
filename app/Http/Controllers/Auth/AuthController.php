@@ -32,11 +32,13 @@ use App\Helpers\Utilities\RandomGenerator;
 use App\Exceptions\FailedRegisterException;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Exceptions\SendVerificationCodeException;
+use App\Services\Audit\ActivityLogger;
 
 class AuthController extends Controller
 {
     public function __construct(
-        protected UserService $userService
+        protected UserService $userService,
+        private readonly ActivityLogger $activityLogger
     ) {
     }
 
@@ -280,7 +282,7 @@ class AuthController extends Controller
     public function storeVerifyAccount(Request $request, string $user)
     {
         $requestDTO = $request->validate([
-            'verify_code' => 'required|numeric'
+            'verify_code' => ['required', 'digits:6']
         ], [], [
             'verify_code' => 'Kode Verifikasi'
         ]);
@@ -299,7 +301,18 @@ class AuthController extends Controller
                 ->with('toastSuccess', 'Akun anda sudah terverifikasi, Silahkan Login');
         }
 
-        if ((string) $userData->verification_code !== (string) $requestDTO['verify_code']) {
+        if (!$userData->verification_code || !$userData->verification_code_expires_at || $userData->verification_code_expires_at->isPast()) {
+            return redirect(route('auth.verify-account', $user))
+                ->with('toastError', 'Kode verifikasi sudah kedaluwarsa. Silakan kirim ulang kode.');
+        }
+
+        if ($userData->verification_attempts >= 5) {
+            return redirect(route('auth.verify-account', $user))
+                ->with('toastError', 'Terlalu banyak percobaan. Silakan kirim ulang kode verifikasi.');
+        }
+
+        if (!Hash::check((string) $requestDTO['verify_code'], $userData->verification_code)) {
+            $userData->increment('verification_attempts');
             return redirect(route('auth.verify-account', $user))
                 ->with('toastError', __('auth.wrong_code'));
         }
@@ -307,6 +320,8 @@ class AuthController extends Controller
         try {
             $userData->email_verified_at = now();
             $userData->verification_code = null;
+            $userData->verification_code_expires_at = null;
+            $userData->verification_attempts = 0;
             $userData->save();
 
             return redirect()
@@ -358,7 +373,11 @@ class AuthController extends Controller
                 : $user->verification_code;
 
             if ($withRefreshCode) {
-                $user->update(['verification_code' => $verificationCode]);
+                $user->update([
+                    'verification_code' => Hash::make((string) $verificationCode),
+                    'verification_code_expires_at' => now()->addMinutes(10),
+                    'verification_attempts' => 0,
+                ]);
             }
 
             // Load relasi jurusan agar nama prodi bisa dikirim di email
@@ -532,5 +551,25 @@ MSG;
         request()->session()->regenerateToken();
 
         return redirect()->route('auth.login')->with('toastSuccess', __('auth.logout'));
+    }
+
+    public function stopImpersonating(Request $request)
+    {
+        abort_unless($request->session()->has('impersonator_admin_id') && Auth::guard('admin')->check(), 403);
+
+        $student = Auth::guard('web')->user();
+        $this->activityLogger->log(
+            'auth',
+            'student.impersonation.stopped',
+            'Admin mengakhiri sesi sebagai mahasiswa.',
+            $student
+        );
+
+        Auth::guard('web')->logout();
+        $request->session()->forget('impersonator_admin_id');
+        $request->session()->regenerate();
+
+        return redirect()->route('admin.dashboard')
+            ->with('toastSuccess', 'Anda kembali ke dashboard admin.');
     }
 }

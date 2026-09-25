@@ -16,6 +16,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 
 class MahasiswaBaruController extends Controller
@@ -145,7 +147,6 @@ class MahasiswaBaruController extends Controller
 
         $mahasiswa->forceFill([
             'password' => Hash::make($password),
-            'password_plaintext' => $password,
         ])->save();
 
         return redirect()->route('admin.mahasiswa-baru.detail', $id)
@@ -167,7 +168,6 @@ class MahasiswaBaruController extends Controller
             $password = $this->randomPassword();
             $mahasiswa->forceFill([
                 'password' => Hash::make($password),
-                'password_plaintext' => $password,
             ])->save();
         }
 
@@ -178,6 +178,31 @@ class MahasiswaBaruController extends Controller
     private function randomPassword(): string
     {
         return Str::random(7) . random_int(0, 9) . '!';
+    }
+
+    public function impersonate(Request $request, $id)
+    {
+        abort_if($request->session()->has('impersonator_admin_id'), 409, 'Sesi impersonasi sudah aktif.');
+
+        $mahasiswa = User::where('role', User::USER_ROLE)->findOrFail($id);
+        $admin = Auth::guard('admin')->user();
+
+        $request->session()->put('impersonator_admin_id', $admin->getKey());
+        Auth::guard('web')->login($mahasiswa);
+        $request->session()->regenerate();
+
+        $this->activityLogger->log(
+            'auth',
+            'student.impersonation.started',
+            'Admin masuk sebagai mahasiswa.',
+            $mahasiswa,
+            [],
+            [],
+            ['admin_id' => $admin->getKey()]
+        );
+
+        return redirect()->route('dashboard.index')
+            ->with('toastSuccess', "Anda sedang masuk sebagai {$mahasiswa->name}.");
     }
 
     public function quickEdit($id)
@@ -296,6 +321,18 @@ class MahasiswaBaruController extends Controller
 
     public function cetak(Request $request)
     {
+        // DomPDF membutuhkan memori lebih besar ketika laporan berisi ratusan
+        // pendaftar. Konfigurasi PHP-FPM/Apache sering lebih kecil dari CLI.
+        if ($this->memoryLimitInBytes((string) ini_get('memory_limit')) < 512 * 1024 * 1024) {
+            @ini_set('memory_limit', '512M');
+        }
+        @set_time_limit(180);
+
+        $dompdfTempPath = storage_path('app/dompdf-temp');
+        $dompdfFontPath = storage_path('app/dompdf-fonts');
+        File::ensureDirectoryExists($dompdfTempPath);
+        File::ensureDirectoryExists($dompdfFontPath);
+
         $query = $this->buildMahasiswaQuery($request);
         $data = $query->get();
 
@@ -318,7 +355,7 @@ class MahasiswaBaruController extends Controller
             if ($s) $statusLabel = $s->label();
         }
 
-        $adminName = auth()->user()->name ?? auth()->guard('admin')->user()->name ?? 'Admin';
+        $adminName = auth('admin')->user()?->name ?? 'Admin';
 
         $meta = [
             'periode' => $periodeName,
@@ -339,17 +376,38 @@ class MahasiswaBaruController extends Controller
         );
 
         $pdf = Pdf::loadView('admin_dashboard.pages.mahasiswa.pdf', compact('data', 'meta'))
-            ->setPaper('A4', 'landscape')
+            ->setPaper('A3', 'landscape')
             ->setOptions([
                 'isHtml5ParserEnabled' => true,
-                'isRemoteEnabled' => true,
+                'isRemoteEnabled' => false,
                 'defaultFont' => 'sans-serif',
+                'tempDir' => $dompdfTempPath,
+                'fontDir' => $dompdfFontPath,
+                'fontCache' => $dompdfFontPath,
             ])
             ->setOption('font_size', 9);
 
         $filename = 'laporan-pmb-' . now()->format('Y-m-d') . '.pdf';
 
         return $pdf->download($filename);
+    }
+
+    private function memoryLimitInBytes(string $value): int
+    {
+        $value = trim($value);
+
+        if ($value === '' || $value === '-1') {
+            return PHP_INT_MAX;
+        }
+
+        $number = (int) $value;
+
+        return match (strtolower(substr($value, -1))) {
+            'g' => $number * 1024 * 1024 * 1024,
+            'm' => $number * 1024 * 1024,
+            'k' => $number * 1024,
+            default => $number,
+        };
     }
 
     public function cetakExcel(Request $request)
@@ -375,7 +433,7 @@ class MahasiswaBaruController extends Controller
             if ($s) $statusLabel = $s->label();
         }
 
-        $adminName = auth()->user()->name ?? auth()->guard('admin')->user()->name ?? 'Admin';
+        $adminName = auth('admin')->user()?->name ?? 'Admin';
 
         $filters = [
             'periode_name' => $periodeName,
