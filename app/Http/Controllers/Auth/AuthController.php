@@ -33,6 +33,7 @@ use App\Exceptions\FailedRegisterException;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Exceptions\SendVerificationCodeException;
 use App\Services\Audit\ActivityLogger;
+use Illuminate\Support\Facades\RateLimiter;
 
 class AuthController extends Controller
 {
@@ -52,10 +53,20 @@ class AuthController extends Controller
     public function storeLogin(LoginRequest $request)
     {
         $credentials = $request->validated();
+        $throttleKey = Str::lower($credentials['email']) . '|' . $request->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+
+            return redirect()->route('auth.login')
+                ->with('toastError', "Terlalu banyak percobaan login. Coba kembali dalam {$seconds} detik.")
+                ->withInput($request->only('email'));
+        }
 
         try {
             // 1. Coba untuk login terlebih dahulu
             if (!Auth::attempt($credentials)) {
+                RateLimiter::hit($throttleKey, 900);
                 return redirect()->route('auth.login')->with('toastError', __('auth.wrong_password'))->withInput();
             }
 
@@ -74,6 +85,7 @@ class AuthController extends Controller
 
             // Regenerasi session untuk keamanan
             $request->session()->regenerate();
+            RateLimiter::clear($throttleKey);
 
             // Eager load relasi yang dibutuhkan
             $user->load(['jurusan', 'periode', 'gelombang']);

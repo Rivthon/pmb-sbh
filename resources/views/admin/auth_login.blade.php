@@ -582,7 +582,6 @@
                   class="input-control-custom @error('email') is-invalid @enderror"
                   id="email"
                   name="email"
-                  placeholder="admin@sbh.ac.id"
                   value="{{ old('email') }}"
                   autocomplete="username"
                   autofocus

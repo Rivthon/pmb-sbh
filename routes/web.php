@@ -89,7 +89,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('login', [AdminAuthController::class, 'showLoginForm'])->name('login');
 
     // Proses login admin
-    Route::post('login', [AdminAuthController::class, 'storeLogin'])->middleware('throttle:5,1')->name('login.store');
+    Route::post('login', [AdminAuthController::class, 'storeLogin'])->middleware('throttle:10,1')->name('login.store');
 
     // // Dashboard admin dengan middleware auth:admin
     // Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard')->middleware('auth:admin');
@@ -443,7 +443,7 @@ Route::group([
     'as' => 'auth.'
 ], function () {
     Route::get('/login', [AuthController::class, 'viewLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'storeLogin'])->middleware('throttle:5,1')->name('store.login');
+    Route::post('/login', [AuthController::class, 'storeLogin'])->middleware('throttle:10,1')->name('store.login');
 
     Route::get('/register', [AuthController::class, 'viewRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'storeRegister'])->name('store.register');

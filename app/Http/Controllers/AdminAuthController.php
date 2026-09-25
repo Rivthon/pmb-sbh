@@ -17,6 +17,8 @@ use App\Services\MasterData\UserService;
 use Illuminate\Support\Facades\DB;
 use App\Services\Audit\ActivityLogger;
 use App\Support\AdminPermissions;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 
 class AdminAuthController extends Controller
 {
@@ -33,6 +35,15 @@ class AdminAuthController extends Controller
 {
     // Validasi input dari request
     $requestDTO = $request->validated();
+    $throttleKey = Str::lower($requestDTO['email']) . '|' . $request->ip();
+
+    if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+        $seconds = RateLimiter::availableIn($throttleKey);
+
+        return redirect()->route('admin.login')
+            ->with('toastError', "Terlalu banyak percobaan login. Coba kembali dalam {$seconds} detik.")
+            ->withInput($request->only('email'));
+    }
 
     try {
         // Cari admin berdasarkan email
@@ -40,6 +51,7 @@ class AdminAuthController extends Controller
 
         // Jika admin tidak ditemukan, arahkan kembali ke halaman login
         if (is_null($admin)) {
+            RateLimiter::hit($throttleKey, 900);
             return redirect()->route('admin.login')->with('toastError', 'Email atau password tidak sesuai.');
         }
 
@@ -55,6 +67,7 @@ class AdminAuthController extends Controller
         ])) {
             // Regenerasi session untuk keamanan
             request()->session()->regenerate();
+            RateLimiter::clear($throttleKey);
 
             $this->activityLogger->log(
                 'auth',
@@ -115,6 +128,8 @@ class AdminAuthController extends Controller
         }
 
         // Jika password salah, arahkan kembali ke halaman login dengan pesan error
+        RateLimiter::hit($throttleKey, 900);
+
         return redirect()->route('admin.login')->with('toastError', 'Email atau password tidak sesuai.')->withInput();
     } catch (\Throwable $th) {
         // Tangani error dan arahkan kembali dengan pesan error
