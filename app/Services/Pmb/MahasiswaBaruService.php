@@ -211,7 +211,7 @@ class MahasiswaBaruService
         $this->activityLogger->log(
             'pmb',
             'mahasiswa.force-deleted',
-            'Super Admin menghapus permanen data mahasiswa PMB',
+            'Admin menghapus permanen data mahasiswa PMB',
             null,
             $oldValues
         );

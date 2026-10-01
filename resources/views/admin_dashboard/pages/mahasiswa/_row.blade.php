@@ -105,7 +105,7 @@
                         @csrf
                         @method('DELETE')
                         <button type="button" class="dropdown-item text-danger" onclick="confirmDelete(this.closest('form'), '{{ addslashes($mahasiswa->name) }}')">
-                            <i class="bx bx-trash text-danger me-2"></i> Hapus
+                            <i class="bx bx-trash text-danger me-2"></i> Hapus Permanen
                         </button>
                     </form>
                 </li>

@@ -271,12 +271,13 @@ class MahasiswaBaruController extends Controller
 
     public function destroy($id)
     {
-        $mahasiswa = $this->mahasiswaBaruService->findOrFail($id);
-        $this->mahasiswaBaruService->delete($mahasiswa);
+        // Hapus permanen agar record soft-delete tidak menahan unique email
+        // ketika calon mahasiswa ingin melakukan pendaftaran ulang.
+        $this->mahasiswaBaruService->forceDelete($id);
 
         return redirect()
             ->route('admin.mahasiswa-baru.index')
-            ->with('toastSuccess', 'Mahasiswa baru berhasil dihapus.');
+            ->with('toastSuccess', 'Mahasiswa berhasil dihapus permanen. Email dapat digunakan untuk mendaftar kembali.');
     }
 
     public function restore($id)
