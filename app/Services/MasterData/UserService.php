@@ -35,8 +35,8 @@ class UserService
     public function createUser(array $userDTO)
     {
         try {
-            // Password bawaan dibuat otomatis saat registrasi. Password plaintext
-            // hanya dibawa sementara untuk email dan tidak disimpan ke database.
+            // Password bawaan disimpan pada kolom terenkripsi agar admin berizin
+            // dapat membantu pendaftar tanpa menyimpan nilai mentah di database.
             $plainPassword = blank($userDTO['password'] ?? null)
                 ? Str::random(10)
                 : $userDTO['password'];
@@ -46,8 +46,8 @@ class UserService
                 $userDTO['image'] = $this->uploadFile($userDTO['image'], User::FOLDER_NAME);
             }
 
-            unset($userDTO['password_plaintext']);
             $userDTO['password'] = bcrypt($plainPassword);
+            $userDTO['password_plaintext'] = $plainPassword;
 
             // Generate kode unik berdasarkan role
             $prefix = $userDTO['role'] == User::ADMIN_ROLE
@@ -67,7 +67,6 @@ class UserService
 
             // Simpan user baru
             $createdUser = User::create($userDTO);
-            $createdUser->setAttribute('password_plaintext', $plainPassword);
 
             return ObjectResponse::success(
                 __('crud.created', ['name' => 'User']),

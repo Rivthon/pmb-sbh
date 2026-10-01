@@ -147,6 +147,7 @@ class MahasiswaBaruController extends Controller
 
         $mahasiswa->forceFill([
             'password' => Hash::make($password),
+            'password_plaintext' => $password,
         ])->save();
 
         return redirect()->route('admin.mahasiswa-baru.detail', $id)
@@ -168,6 +169,7 @@ class MahasiswaBaruController extends Controller
             $password = $this->randomPassword();
             $mahasiswa->forceFill([
                 'password' => Hash::make($password),
+                'password_plaintext' => $password,
             ])->save();
         }
 

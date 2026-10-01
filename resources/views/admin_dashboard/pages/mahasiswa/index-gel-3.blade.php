@@ -87,7 +87,13 @@
                         @include('admin_dashboard.components.pmb-document-upload-status', ['mahasiswa' => $mahasiswa])
                     </td>
                     <td>{{ $mahasiswa->jurusan->nama_jurusan ?? '-' }}</td>
-                    <td><span class="text-muted">Password terenkripsi</span></td>
+                    <td>
+                        @can(\App\Support\AdminPermissions::PMB_VIEW_CREDENTIALS)
+                            <code>{{ $mahasiswa->password_plaintext ?: '-' }}</code>
+                        @else
+                            <span class="text-muted">••••••••</span>
+                        @endcan
+                    </td>
                     <td>
                         <div class="dropdown">
                             <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"

@@ -75,6 +75,7 @@ class User extends Authenticatable
         'img_ijazah',
         'tempat_lahir',
         'tgl_lahir',
+        'password_plaintext',
         'email_verified_at',
         'verification_code',
         'verification_code_expires_at',
@@ -96,6 +97,7 @@ class User extends Authenticatable
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'verification_code_expires_at' => 'datetime',
+        'password_plaintext' => 'encrypted',
     ];
 
     public const ADMIN_ROLE = 'admin';

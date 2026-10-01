@@ -23,15 +23,14 @@
         {{ $mahasiswa->jurusan->nama_jurusan ?? '-' }}
     </td>
     <td>
-        @can(\App\Support\AdminPermissions::PMB_IMPERSONATE)
-            <form action="{{ route('admin.mahasiswa-baru.impersonate', $mahasiswa->id) }}" method="POST">
-                @csrf
-                <button type="submit" class="btn btn-sm btn-outline-primary" onclick="return confirm('Masuk sebagai {{ addslashes($mahasiswa->name) }}? Aktivitas ini akan dicatat.')">
-                    <i class="bx bx-log-in-circle me-1"></i> Masuk
-                </button>
-            </form>
+        @can(\App\Support\AdminPermissions::PMB_VIEW_CREDENTIALS)
+            @if(filled($mahasiswa->password_plaintext))
+                <code class="px-2 py-0.5 rounded bg-label-secondary text-secondary" style="font-family: monospace; font-size: 0.8125rem;">{{ $mahasiswa->password_plaintext }}</code>
+            @else
+                <span class="text-muted">Belum tersedia</span>
+            @endif
         @else
-            <span class="text-muted">Password terenkripsi</span>
+            <span class="text-muted">••••••••</span>
         @endcan
     </td>
     <td class="text-center">

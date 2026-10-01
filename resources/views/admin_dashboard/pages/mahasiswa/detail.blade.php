@@ -224,8 +224,16 @@
                                             <span class="text-heading fw-semibold">{{ $mahasiswa->asal_sekolah ?? '-' }}</span>
                                         </div>
                                         <div>
-                                            <small class="text-muted d-block mb-2">Akses Akun Mahasiswa</small>
-                                            <div class="text-muted small mb-2">Password tersimpan terenkripsi dan tidak dapat ditampilkan kembali.</div>
+                                            <small class="text-muted d-block mb-2">Plain Password (Kredensial)</small>
+                                            @can(\App\Support\AdminPermissions::PMB_VIEW_CREDENTIALS)
+                                                @if(filled($mahasiswa->password_plaintext))
+                                                    <code class="px-2 py-1 rounded bg-label-secondary text-secondary d-inline-block mb-2">{{ $mahasiswa->password_plaintext }}</code>
+                                                @else
+                                                    <div class="text-muted small mb-2">Belum tersedia. Generate password baru untuk membuat kredensial.</div>
+                                                @endif
+                                            @else
+                                                <div class="text-muted small mb-2">Anda tidak memiliki izin melihat kredensial.</div>
+                                            @endcan
                                             @can(\App\Support\AdminPermissions::PMB_IMPERSONATE)
                                                 <form action="{{ route('admin.mahasiswa-baru.impersonate', $mahasiswa->id) }}" method="POST" class="mb-2">
                                                     @csrf

@@ -19,6 +19,7 @@ final class AdminPermissions
     public const PMB_EXPORT = 'pmb.export';
     public const PMB_SEND_EMAIL = 'pmb.send-email';
     public const PMB_IMPERSONATE = 'pmb.impersonate';
+    public const PMB_VIEW_CREDENTIALS = 'pmb.view-credentials';
 
     public const PAYMENT_VIEW = 'payment.view';
     public const PAYMENT_VERIFY = 'payment.verify';
@@ -119,6 +120,7 @@ final class AdminPermissions
                 self::PMB_EXPORT,
                 self::PMB_SEND_EMAIL,
                 self::PMB_IMPERSONATE,
+                self::PMB_VIEW_CREDENTIALS,
             ],
             'Pembayaran' => [
                 self::PAYMENT_VIEW,
@@ -240,6 +242,7 @@ final class AdminPermissions
                 self::PMB_EXPORT,
                 self::PMB_SEND_EMAIL,
                 self::PMB_IMPERSONATE,
+                self::PMB_VIEW_CREDENTIALS,
                 self::PMB_QUEUE_TES_TULIS,
                 self::PMB_QUEUE_KESEHATAN,
                 self::PMB_QUEUE_WAWANCARA,
@@ -277,6 +280,7 @@ final class AdminPermissions
                 self::PMB_UPDATE_STATUS,
                 self::PMB_VERIFY_DOCUMENT,
                 self::PMB_SEND_EMAIL,
+                self::PMB_VIEW_CREDENTIALS,
                 self::PMB_QUEUE_TES_TULIS,
                 self::PMB_QUEUE_KESEHATAN,
                 self::PMB_QUEUE_WAWANCARA,

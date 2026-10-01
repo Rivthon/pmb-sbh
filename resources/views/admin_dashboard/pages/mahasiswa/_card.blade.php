@@ -95,17 +95,16 @@
             </dd>
         </div>
         <div>
-            <dt>Akses Akun</dt>
+            <dt>Plain Password</dt>
             <dd>
-                @can(\App\Support\AdminPermissions::PMB_IMPERSONATE)
-                    <form action="{{ route('admin.mahasiswa-baru.impersonate', $mahasiswa->id) }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-sm btn-outline-primary" onclick="return confirm('Masuk sebagai {{ addslashes($mahasiswa->name) }}? Aktivitas ini akan dicatat.')">
-                            <i class="bx bx-log-in-circle me-1"></i> Masuk sebagai Mahasiswa
-                        </button>
-                    </form>
+                @can(\App\Support\AdminPermissions::PMB_VIEW_CREDENTIALS)
+                    @if(filled($mahasiswa->password_plaintext))
+                        <code>{{ $mahasiswa->password_plaintext }}</code>
+                    @else
+                        <span class="text-muted">Belum tersedia</span>
+                    @endif
                 @else
-                    <span class="text-muted">Password terenkripsi</span>
+                    <span class="text-muted">••••••••</span>
                 @endcan
             </dd>
         </div>
