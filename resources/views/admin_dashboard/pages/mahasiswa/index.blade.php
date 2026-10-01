@@ -93,6 +93,16 @@
                 </div>
             </form>
 
+            <div class="d-flex flex-wrap align-items-center gap-3 px-3 pb-3 border-bottom">
+                <div class="form-check mb-0">
+                    <input class="form-check-input" type="checkbox" id="select-all-mahasiswa">
+                    <label class="form-check-label fw-semibold" for="select-all-mahasiswa">
+                        Pilih semua mahasiswa di halaman ini
+                    </label>
+                </div>
+                <span class="badge bg-label-primary" id="selected-mahasiswa-count">0 mahasiswa dipilih</span>
+            </div>
+
             {{-- Table Loader --}}
             <div id="table-loader" class="text-center py-4 d-none">
                 <span class="spinner-border text-primary spinner-border-sm" role="status"></span>
@@ -137,6 +147,40 @@
     const searchInput = document.getElementById('search');
     const paginationContainer = document.getElementById('pagination-links');
     const cardList = document.getElementById('mahasiswa-card-list');
+    const selectAllMahasiswa = document.getElementById('select-all-mahasiswa');
+    const selectedMahasiswaCount = document.getElementById('selected-mahasiswa-count');
+
+    function mahasiswaCheckboxes() {
+        return [...document.querySelectorAll('.js-mahasiswa-select')];
+    }
+
+    function updateMahasiswaSelectionState() {
+        const checkboxes = mahasiswaCheckboxes();
+        const selectedCount = checkboxes.filter(input => input.checked).length;
+
+        if (selectedMahasiswaCount) {
+            selectedMahasiswaCount.textContent = `${selectedCount} mahasiswa dipilih`;
+        }
+
+        if (selectAllMahasiswa) {
+            selectAllMahasiswa.checked = checkboxes.length > 0 && selectedCount === checkboxes.length;
+            selectAllMahasiswa.indeterminate = selectedCount > 0 && selectedCount < checkboxes.length;
+            selectAllMahasiswa.disabled = checkboxes.length === 0;
+        }
+    }
+
+    selectAllMahasiswa?.addEventListener('change', function () {
+        mahasiswaCheckboxes().forEach(input => {
+            input.checked = this.checked;
+        });
+        updateMahasiswaSelectionState();
+    });
+
+    document.addEventListener('change', function (event) {
+        if (event.target.classList.contains('js-mahasiswa-select')) {
+            updateMahasiswaSelectionState();
+        }
+    });
 
     document.getElementById('btn-generate-password-bulk')?.addEventListener('click', function () {
         const selected = [...document.querySelectorAll('.js-mahasiswa-select:checked')];
@@ -146,6 +190,7 @@
         }
         if (!confirm(`Generate password untuk ${selected.length} mahasiswa?`)) return;
         const form = document.getElementById('bulk-password-form');
+        form.querySelectorAll('input[name="ids[]"]').forEach(input => input.remove());
         selected.forEach(input => {
             const hidden = document.createElement('input');
             hidden.type = 'hidden';
@@ -187,6 +232,7 @@
             if (cardList) cardList.innerHTML = data.cards || '';
             if (paginationContainer) paginationContainer.innerHTML = data.pagination || '';
             bindPaginationLinks();
+            updateMahasiswaSelectionState();
         })
         .catch(error => {
             if (tableLoader) {
@@ -265,6 +311,7 @@
     // Jalankan saat awal
     document.addEventListener('DOMContentLoaded', function () {
         bindPaginationLinks();
+        updateMahasiswaSelectionState();
     });
 </script>
 

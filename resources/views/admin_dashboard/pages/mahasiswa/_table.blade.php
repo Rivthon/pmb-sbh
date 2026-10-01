@@ -5,7 +5,7 @@
     ])
 @empty
     <tr>
-        <td colspan="8" class="text-center py-5">
+        <td colspan="9" class="text-center py-5">
             @include('admin_dashboard.components.empty-state', [
                 'title' => 'Tidak Ada Data',
                 'description' => 'Tidak ada data mahasiswa PMB yang ditemukan.',
