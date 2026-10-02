@@ -209,15 +209,17 @@ class AuthController extends Controller
 
             if ($request->expectsJson()) {
                 return response()->json([
-                    'success' => false,
-                    'message' => 'Pendaftaran berhasil, tetapi kode verifikasi gagal dikirim.',
+                    'success' => true,
+                    'warning' => true,
+                    'email_sent' => false,
+                    'message' => 'Pendaftaran berhasil, tetapi kode verifikasi belum terkirim. Silakan kirim ulang kode pada halaman verifikasi.',
                     'redirect' => route('auth.verify-account', $user->uuid),
-                ], 503);
+                ]);
             }
 
             return redirect()
                 ->route('auth.verify-account', $user->uuid)
-                ->with('toastError', 'Pendaftaran berhasil, tetapi kode verifikasi gagal dikirim. Silakan kirim ulang kode verifikasi.');
+                ->with('toastWarning', 'Pendaftaran berhasil, tetapi kode verifikasi belum terkirim. Silakan kirim ulang kode verifikasi.');
         }
 
         /**
@@ -228,6 +230,9 @@ class AuthController extends Controller
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
+                'warning' => false,
+                'email_sent' => true,
+                'message' => 'Pendaftaran berhasil. Kode verifikasi telah dikirim.',
                 'redirect' => route('auth.verify-account', $user->uuid)
             ]);
         }

@@ -396,11 +396,13 @@
                     throw new Error("Server tidak mengirim redirect URL");
                 }
 
-                iziToast.success({
-                    title: 'Registrasi Berhasil!',
-                    message: 'Mengalihkan ke halaman verifikasi...',
+                const notification = data.warning ? iziToast.warning : iziToast.success;
+
+                notification({
+                    title: data.warning ? 'Pendaftaran Berhasil, Email Belum Terkirim' : 'Registrasi Berhasil!',
+                    message: data.message || 'Mengalihkan ke halaman verifikasi...',
                     position: 'center',
-                    timeout: 2000,
+                    timeout: data.warning ? 3500 : 2000,
                     overlay: true,
                     onClosed: function () {
                         window.location.href = redirectUrl;

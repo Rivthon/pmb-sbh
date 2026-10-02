@@ -21,7 +21,7 @@
     <script>
         $(document).ready(function(){
             iziToast.info({
-                title: 'Info'
+                title: 'Info',
                 message : '{{ session('toastInfo') }}',
             });
         })
@@ -30,7 +30,7 @@
     <script>
         $(document).ready(function(){
             iziToast.warning({
-                title: 'Caution'
+                title: 'Caution',
                 message : '{{ session('toastWarning') }}',
             });
         })
