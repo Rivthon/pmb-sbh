@@ -396,9 +396,7 @@
                     throw new Error("Server tidak mengirim redirect URL");
                 }
 
-                const notification = data.warning ? iziToast.warning : iziToast.success;
-
-                notification({
+                const notificationOptions = {
                     title: data.warning ? 'Pendaftaran Berhasil, Email Belum Terkirim' : 'Registrasi Berhasil!',
                     message: data.message || 'Mengalihkan ke halaman verifikasi...',
                     position: 'center',
@@ -407,7 +405,13 @@
                     onClosed: function () {
                         window.location.href = redirectUrl;
                     }
-                });
+                };
+
+                if (data.warning) {
+                    iziToast.warning(notificationOptions);
+                } else {
+                    iziToast.success(notificationOptions);
+                }
 
             } catch (error) {
 
