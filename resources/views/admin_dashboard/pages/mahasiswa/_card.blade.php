@@ -35,6 +35,16 @@
                         <i class="bx bx-cog text-warning me-2"></i> Edit Lengkap
                     </a>
                 </li>
+                @if(is_null($mahasiswa->email_verified_at))
+                    <li>
+                        <form action="{{ route('admin.mahasiswa-baru.resend-verification', $mahasiswa->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="dropdown-item text-info" onclick="return confirm('Kirim ulang kode verifikasi ke {{ addslashes($mahasiswa->email) }}?')">
+                                <i class="bx bx-mail-send text-info me-2"></i> Kirim Verifikasi Ulang
+                            </button>
+                        </form>
+                    </li>
+                @endif
                 <li>
                     <form action="{{ route('admin.mahasiswa-baru.update-status', $mahasiswa->id) }}" method="POST">
                         @csrf

@@ -109,6 +109,19 @@
                         <a href="mailto:{{ $mahasiswa->email }}" class="btn btn-label-primary w-100 text-start d-flex align-items-center gap-2">
                             <i class="bx bx-envelope fs-5"></i> Kirim Email Manual
                         </a>
+
+                        @if(is_null($mahasiswa->email_verified_at))
+                            <form action="{{ route('admin.mahasiswa-baru.resend-verification', $mahasiswa->id) }}" method="POST" class="w-100">
+                                @csrf
+                                <button type="submit" class="btn btn-outline-info w-100 text-start d-flex align-items-center gap-2" onclick="return confirm('Kirim ulang kode verifikasi ke {{ addslashes($mahasiswa->email) }}?')">
+                                    <i class="bx bx-mail-send fs-5"></i> Kirim Verifikasi Ulang
+                                </button>
+                            </form>
+                        @else
+                            <button type="button" class="btn btn-label-success w-100 text-start d-flex align-items-center gap-2" disabled>
+                                <i class="bx bx-check-circle fs-5"></i> Email Sudah Terverifikasi
+                            </button>
+                        @endif
                         
                         <div class="dropdown-divider my-2"></div>
                         

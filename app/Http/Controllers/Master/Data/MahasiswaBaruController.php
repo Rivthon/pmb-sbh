@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Master\Data;
 
 use App\Exports\MahasiswaExport;
+use App\Helpers\Utilities\RandomGenerator;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreUpdateMahasiswaBaruRequest;
+use App\Mail\VerificationCodeMail;
 use App\Models\Kabupaten;
 use App\Models\Kecamatan;
 use App\Models\Kelurahan;
@@ -16,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
@@ -152,6 +155,45 @@ class MahasiswaBaruController extends Controller
 
         return redirect()->route('admin.mahasiswa-baru.detail', $id)
             ->with('toastSuccess', "Password baru untuk {$mahasiswa->name}: {$password}");
+    }
+
+    public function resendVerification($id)
+    {
+        $mahasiswa = User::where('role', User::USER_ROLE)->findOrFail($id);
+
+        if ($mahasiswa->email_verified_at) {
+            return back()->with('toastInfo', 'Email mahasiswa ini sudah terverifikasi.');
+        }
+
+        try {
+            $verificationCode = RandomGenerator::generateRandomNumber(6, true);
+
+            $mahasiswa->forceFill([
+                'verification_code' => Hash::make((string) $verificationCode),
+                'verification_code_expires_at' => now()->addMinutes(10),
+                'verification_attempts' => 0,
+            ])->save();
+
+            $mahasiswa->loadMissing('jurusan');
+
+            Mail::to($mahasiswa->email)->send(new VerificationCodeMail(
+                $verificationCode,
+                $mahasiswa->name,
+                $mahasiswa->uuid,
+                $mahasiswa->jurusan->nama_jurusan ?? '-',
+                null
+            ));
+
+            return back()->with('toastSuccess', "Kode verifikasi baru berhasil dikirim ke {$mahasiswa->email}.");
+        } catch (\Throwable $e) {
+            Log::error('ADMIN_RESEND_VERIFICATION_FAILED', [
+                'user_id' => $mahasiswa->id,
+                'email' => $mahasiswa->email,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('toastError', 'Kode verifikasi gagal dikirim. Periksa konfigurasi email dan log aplikasi.');
+        }
     }
 
     public function generatePasswordsBulk(Request $request)

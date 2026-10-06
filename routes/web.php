@@ -136,6 +136,7 @@ Route::prefix('admin')
         Route::put('mahasiswa-baru/{id}', [MahasiswaBaruController::class, 'update'])->middleware('permission:' . AdminPermissions::PMB_EDIT)->name('mahasiswa-baru.update');
         Route::post('mahasiswa-baru/generate-password-bulk', [MahasiswaBaruController::class, 'generatePasswordsBulk'])->middleware('permission:' . AdminPermissions::PMB_EDIT)->name('mahasiswa-baru.generate-password-bulk');
         Route::post('mahasiswa-baru/{id}/generate-password', [MahasiswaBaruController::class, 'generatePassword'])->middleware('permission:' . AdminPermissions::PMB_EDIT)->name('mahasiswa-baru.generate-password');
+        Route::post('mahasiswa-baru/{id}/resend-verification', [MahasiswaBaruController::class, 'resendVerification'])->middleware('permission:' . AdminPermissions::PMB_SEND_EMAIL)->name('mahasiswa-baru.resend-verification');
         Route::post('mahasiswa-baru/{id}/impersonate', [MahasiswaBaruController::class, 'impersonate'])->middleware('permission:' . AdminPermissions::PMB_IMPERSONATE)->name('mahasiswa-baru.impersonate');
         Route::delete('mahasiswa-baru/{id}', [MahasiswaBaruController::class, 'destroy'])->middleware('permission:' . AdminPermissions::PMB_DELETE)->name('mahasiswa-baru.destroy');
 
