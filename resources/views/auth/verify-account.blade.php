@@ -149,11 +149,11 @@
                 </div>
                 <div class="d-flex align-items-center">
                     <div class="badge bg-label-success rounded p-2 me-3">
-                        <i class="bx bxl-whatsapp fs-5"></i>
+                        <i class="bx bx-envelope fs-5"></i>
                     </div>
                     <div>
                         <small class="text-muted d-block">Email</small>
-                        <span class="fw-semibold text-dark">{{ $userData->Email }}</span>
+                        <span class="fw-semibold text-dark">{{ $userData->email }}</span>
                     </div>
                 </div>
             </div>
