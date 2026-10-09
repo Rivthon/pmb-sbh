@@ -129,7 +129,7 @@ class ProfileController extends Controller
 
         return redirect()
             ->route('dashboard.profile.editBerkas')
-            ->with('toastError', $user->missingPmbRequiredDocumentsLabel('Berkas gagal diubah.'));
+            ->with('toastError', $updateProfileResponse->message ?? 'Berkas gagal disimpan. Silakan coba kembali atau hubungi panitia.');
     }
 
 

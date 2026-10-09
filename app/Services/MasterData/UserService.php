@@ -162,8 +162,14 @@ class UserService
                 $updatedUser
             );
         } catch (\Throwable $th) {
+            \Log::error('PMB document upload failed', [
+                'user_uuid' => $user_id,
+                'fields' => array_keys($berkasDTO),
+                'error' => $th->getMessage(),
+            ]);
+
             return ObjectResponse::error(
-                __('crud.error_update', ['name' => 'Berkas']),
+                'Berkas gagal disimpan. Silakan coba kembali atau hubungi panitia.',
                 500,
                 $th->getMessage()
             );
